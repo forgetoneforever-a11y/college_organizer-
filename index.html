@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь Заметок</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-1">
+
+    <div id="media-bg-container" class="media-bg-container"></div>
+    <div id="bg-overlay" class="bg-overlay"></div>
+
+    <div class="app-container">
+        <aside class="sidebar glass">
+            <div class="live-clock-container">
+                <div id="live-time" class="live-time">00:00:00</div>
+                <div id="live-date" class="live-date">Загрузка даты...</div>
+            </div>
+
+            <h2>Настройки</h2>
+            <button id="settings-btn">⚙️ Параметры фона</button>
+            
+            <div id="theme-menu" class="hidden">
+                <p>Градиенты:</p>
+                <button class="theme-option" data-bg="bg-1">Градиент 1</button>
+                <button class="theme-option" data-bg="bg-2">Градиент 2</button>
+                <button class="theme-option" data-bg="bg-3">Тёмный</button>
+                
+                <p style="margin-top: 10px;">Свой файл (Фото / MP4):</p>
+                <input type="file" id="bg-file-input" accept="image/*, video/mp4">
+                
+                <p style="margin-top: 10px;">Или по ссылке:</p>
+                <input type="text" id="bg-url-input" placeholder="https://... (картинка или mp4)">
+                <button id="apply-url-btn">Применить ссылку</button>
+
+                <p style="margin-top: 15px;">Размытие стекла (<span id="blur-value">16</span>px):</p>
+                <input type="range" id="blur-range" min="0" max="40" value="16">
+
+                <p style="margin-top: 10px;">Затемнение фона (<span id="darkness-value">30</span>%):</p>
+                <input type="range" id="darkness-range" min="0" max="80" value="30">
+            </div>
+        </aside>
+
+        <main class="calendar-main glass">
+            <header class="calendar-header">
+                <button id="prev-month">◀</button>
+                <h1 id="month-year">Месяц Год</h1>
+                <button id="next-month">▶</button>
+            </header>
+            
+            <div class="weekdays">
+                <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+            </div>
+            
+            <div class="days-grid" id="days-grid"></div>
+        </main>
+    </div>
+
+    <!-- Модальное окно для заметок и Telegram-будильника -->
+    <div id="note-modal" class="modal hidden">
+        <div class="modal-content glass">
+            <h3 id="modal-date-title">Заметки на дату</h3>
+            <textarea id="note-text" placeholder="Введите заметку на этот день..."></textarea>
+            
+            <div class="alarm-section" style="margin-top: 15px;">
+                <label style="font-size: 14px; display: block; margin-bottom: 5px;">⏰ Будильник в Telegram:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="date" id="alarm-date" style="padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; flex: 1;">
+                    <input type="time" id="alarm-time" style="padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; width: 110px;">
+                </div>
+            </div>
+
+            <div class="modal-buttons" style="margin-top: 20px;">
+                <button id="save-note-btn">Сохранить</button>
+                <button id="close-modal-btn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
