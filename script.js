@@ -11,119 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Настройки фона и меню
-    const settingsBtn = document.getElementById('settings-btn');
-    const themeMenu = document.getElementById('theme-menu');
-    settingsBtn.addEventListener('click', () => themeMenu.classList.toggle('hidden'));
-
-    // Восстановление сохраненного фона при старте
-    const savedBg = localStorage.getItem('customBg');
-    const savedTheme = localStorage.getItem('themeClass');
-    const savedBlur = localStorage.getItem('blurVal');
-    const savedDarkness = localStorage.getItem('darknessVal');
-
-    if (savedBg) {
-        setMediaBackground(savedBg);
-    } else if (savedTheme) {
-        document.body.className = savedTheme;
-    }
-
-    if (savedBlur) {
-        document.querySelectorAll('.glass').forEach(el => el.style.backdropFilter = `blur(${savedBlur}px)`);
-        document.getElementById('blur-range').value = savedBlur;
-        document.getElementById('blur-value').textContent = savedBlur;
-    }
-
-    if (savedDarkness) {
-        document.getElementById('bg-overlay').style.background = `rgba(0, 0, 0, ${savedDarkness / 100})`;
-        document.getElementById('darkness-range').value = savedDarkness;
-        document.getElementById('darkness-value').textContent = savedDarkness;
-    }
-
-    // Смена градиентов
-    document.querySelectorAll('.theme-option').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const theme = btn.getAttribute('data-bg');
-            document.body.className = theme;
-            document.getElementById('media-bg-container').innerHTML = '';
-            localStorage.removeItem('customBg');
-            localStorage.setItem('themeClass', theme);
-        });
-    });
-
-    // Загрузка файла с ПК через временную ссылку
-    const fileInput = document.getElementById('bg-file-input');
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const fileUrl = URL.createObjectURL(file);
-            setMediaBackground(fileUrl, file.type.startsWith('video'));
-            localStorage.setItem('customBgName', file.name);
-            localStorage.removeItem('themeClass');
-        }
-    });
-
-    // Применение по ссылке (включая YouTube)
-    const urlInput = document.getElementById('bg-url-input');
-    const applyUrlBtn = document.getElementById('apply-url-btn');
-    applyUrlBtn.addEventListener('click', () => {
-        const url = urlInput.value.trim();
-        if (url) {
-            const isVideo = url.endsWith('.mp4') || url.includes('video');
-            setMediaBackground(url, isVideo);
-            localStorage.setItem('customBg', url);
-            localStorage.removeItem('themeClass');
-        }
-    });
-
-    function setMediaBackground(src, isVideo = false) {
-        const container = document.getElementById('media-bg-container');
-        
-        // Надежный парсер YouTube-ссылок с поддержкой параметров и разрешений
-        if (src && (src.includes('youtube.com') || src.includes('youtu.be'))) {
-            let videoId = '';
-            if (src.includes('youtu.be/')) {
-                videoId = src.split('youtu.be/')[1].split('?')[0];
-            } else if (src.includes('watch?v=')) {
-                videoId = src.split('watch?v=')[1].split('&')[0];
-            }
-            videoId = videoId.trim();
-
-            container.innerHTML = `
-                <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1&modestbranding=1" 
-                    style="width: 100vw; height: 100vh; pointer-events: none; border: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2);" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>`;
-        } else if (isVideo || (src && src.endsWith('.mp4'))) {
-            container.innerHTML = `<video src="${src}" autoplay loop muted></video>`;
-        } else if (src) {
-            container.innerHTML = `<img src="${src}" alt="Background">`;
-        } else {
-            container.innerHTML = '';
-        }
-    }
-
-    // Ползунки настройки
-    const blurRange = document.getElementById('blur-range');
-    const blurValue = document.getElementById('blur-value');
-    blurRange.addEventListener('input', (e) => {
-        const val = e.target.value;
-        blurValue.textContent = val;
-        document.querySelectorAll('.glass').forEach(el => el.style.backdropFilter = `blur(${val}px)`);
-        localStorage.setItem('blurVal', val);
-    });
-
-    const darknessRange = document.getElementById('darkness-range');
-    const darknessValue = document.getElementById('darkness-value');
-    darknessRange.addEventListener('input', (e) => {
-        const val = e.target.value;
-        darknessValue.textContent = val;
-        document.getElementById('bg-overlay').style.background = `rgba(0, 0, 0, ${val / 100})`;
-        localStorage.setItem('darknessVal', val);
-    });
-
     // Логика календаря
     let currentDate = new Date();
     const monthYear = document.getElementById('month-year');
@@ -228,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Заметка сохранена и будильник отправлен в Telegram!');
             } catch (err) {
                 console.error(err);
-                alert('Заметка сохранена локально, но не удалось связаться с сервером будильника.');
+                alert('Заметка сохранена локально!');
             }
         } else {
             alert('Заметка успешно сохранена!');
