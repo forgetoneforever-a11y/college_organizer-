@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Загрузка файла с ПК через временную ссылку (без ограничения памяти)
+    // Загрузка файла с ПК через временную ссылку
     const fileInput = document.getElementById('bg-file-input');
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setMediaBackground(src, isVideo = false) {
         const container = document.getElementById('media-bg-container');
         
-        // Проверяем, является ли ссылка YouTube-видео
+        // Надежный парсер YouTube-ссылок с защитой от лишних параметров
         if (src && (src.includes('youtube.com') || src.includes('youtu.be'))) {
             let videoId = '';
             if (src.includes('youtu.be/')) {
@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (src.includes('watch?v=')) {
                 videoId = src.split('watch?v=')[1].split('&')[0];
             }
-            
-            // Встраиваем плеер YouTube на фон без звука и элементов управления
+            videoId = videoId.trim();
+
             container.innerHTML = `
                 <iframe 
                     src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1" 
@@ -213,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('note_' + activeDateStr, noteText.value);
         localStorage.setItem('alarm_time_' + activeDateStr, alarmTime.value);
 
-        // Отправка будильника на сервер Vercel (папку api)
         if (alarmDate.value && alarmTime.value) {
             try {
                 await fetch('/api/set-alarm', {
