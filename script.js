@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (alarmDate.value && alarmTime.value) {
             try {
-                await fetch('/api/set-alarm', {
+                const response = await fetch('/api/set-alarm', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -112,10 +112,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         note: noteText.value || 'Напоминание из календаря'
                     })
                 });
-                alert('Заметка сохранена и будильник отправлен в Telegram!');
+
+                if (response.ok) {
+                    alert('Заметка сохранена и будильник отправлен в Telegram!');
+                } else {
+                    alert('Заметка сохранена локально, но сервер Telegram-бота не ответил (проверьте настройки API).');
+                }
             } catch (err) {
                 console.error(err);
-                alert('Заметка сохранена локально!');
+                alert('Заметка сохранена локально (ошибка соединения с сервером).');
             }
         } else {
             alert('Заметка успешно сохранена!');
