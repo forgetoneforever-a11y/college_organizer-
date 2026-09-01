@@ -12,57 +12,16 @@ body {
     align-items: center;
     color: #fff;
     overflow: hidden;
+    background: #121212; /* Строгий темно-серый фон */
     position: relative;
-}
-
-/* Фоны и подложки */
-body.bg-1 { background: linear-gradient(135deg, #1e3c72, #2a5298); }
-body.bg-2 { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
-body.bg-3 { background: #121212; }
-
-.media-bg-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2;
-    overflow: hidden;
-    background-color: #000;
-}
-
-.media-bg-container img, .media-bg-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Стили для корректного отображения YouTube-видео на фоне */
-.media-bg-container iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100vw;
-    height: 56.25vw; /* Соотношение сторон 16:9 */
-    min-height: 100vh;
-    min-width: 177.77vh; /* Соотношение сторон 16:9 */
-    transform: translate(-50%, -50%);
-    pointer-events: none; /* Чтобы клики проходили сквозь видео на интерфейс */
-    border: none;
-}
-
-.bg-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: -1;
-    pointer-events: none;
-    transition: background 0.3s ease;
 }
 
 /* Эффект стекла */
 .glass {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     border-radius: 16px;
 }
@@ -75,70 +34,28 @@ body.bg-3 { background: #121212; }
     height: 600px;
 }
 
-/* Боковая панель */
+/* Боковая панель с часами */
 .sidebar {
-    width: 280px;
+    width: 250px;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    justify-content: center;
 }
 
 .live-clock-container {
     text-align: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .live-time {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .live-date {
-    font-size: 13px;
-    opacity: 0.8;
-}
-
-.sidebar h2 {
-    font-size: 18px;
-    margin-top: 5px;
-}
-
-.sidebar button, .modal-buttons button {
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.sidebar button:hover, .modal-buttons button:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.hidden {
-    display: none;
-}
-
-#theme-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     font-size: 14px;
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-#theme-menu input[type="text"], #theme-menu input[type="file"] {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.2);
-    color: #fff;
-    font-size: 12px;
+    opacity: 0.7;
 }
 
 /* Календарь */
@@ -179,11 +96,11 @@ body.bg-3 { background: #121212; }
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
     flex: 1;
-    gap: 5px;
+    gap: 6px;
 }
 
 .day-cell {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
     padding: 8px;
     cursor: pointer;
@@ -195,11 +112,11 @@ body.bg-3 { background: #121212; }
 }
 
 .day-cell:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .day-cell.inactive {
-    opacity: 0.3;
+    opacity: 0.2;
 }
 
 .day-cell.today {
@@ -210,7 +127,7 @@ body.bg-3 { background: #121212; }
 .modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -232,7 +149,7 @@ body.bg-3 { background: #121212; }
 .modal-content textarea {
     width: 100%;
     height: 100px;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.3);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 8px;
     padding: 10px;
@@ -247,4 +164,15 @@ body.bg-3 { background: #121212; }
 
 .modal-buttons button {
     flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.modal-buttons button:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
