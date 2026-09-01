@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setMediaBackground(src, isVideo = false) {
         const container = document.getElementById('media-bg-container');
         
-        // Надежный парсер YouTube-ссылок с защитой от лишних параметров
+        // Надежный парсер YouTube-ссылок с поддержкой параметров и разрешений
         if (src && (src.includes('youtube.com') || src.includes('youtu.be'))) {
             let videoId = '';
             if (src.includes('youtu.be/')) {
@@ -91,9 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.innerHTML = `
                 <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1&modestbranding=1" 
                     style="width: 100vw; height: 100vh; pointer-events: none; border: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2);" 
-                    allow="autoplay">
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
                 </iframe>`;
         } else if (isVideo || (src && src.endsWith('.mp4'))) {
             container.innerHTML = `<video src="${src}" autoplay loop muted></video>`;
