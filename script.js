@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Загрузка файла с ПК через временную ссылку (без ограничения по размеру localStorage)
+    // Загрузка файла с ПК через временную ссылку (без ограничения памяти)
     const fileInput = document.getElementById('bg-file-input');
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Применение по ссылке
+    // Применение по ссылке (включая YouTube)
     const urlInput = document.getElementById('bg-url-input');
     const applyUrlBtn = document.getElementById('apply-url-btn');
     applyUrlBtn.addEventListener('click', () => {
@@ -78,10 +78,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setMediaBackground(src, isVideo = false) {
         const container = document.getElementById('media-bg-container');
-        if (isVideo) {
+        
+        // Проверяем, является ли ссылка YouTube-видео
+        if (src && (src.includes('youtube.com') || src.includes('youtu.be'))) {
+            let videoId = '';
+            if (src.includes('youtu.be/')) {
+                videoId = src.split('youtu.be/')[1].split('?')[0];
+            } else if (src.includes('watch?v=')) {
+                videoId = src.split('watch?v=')[1].split('&')[0];
+            }
+            
+            // Встраиваем плеер YouTube на фон без звука и элементов управления
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1" 
+                    style="width: 100vw; height: 100vh; pointer-events: none; border: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2);" 
+                    allow="autoplay">
+                </iframe>`;
+        } else if (isVideo || (src && src.endsWith('.mp4'))) {
             container.innerHTML = `<video src="${src}" autoplay loop muted></video>`;
-        } else {
+        } else if (src) {
             container.innerHTML = `<img src="${src}" alt="Background">`;
+        } else {
+            container.innerHTML = '';
         }
     }
 
