@@ -6,39 +6,13 @@
     <title>Календарь Заметок</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-1">
-
-    <div id="media-bg-container" class="media-bg-container"></div>
-    <div id="bg-overlay" class="bg-overlay"></div>
+<body>
 
     <div class="app-container">
         <aside class="sidebar glass">
             <div class="live-clock-container">
                 <div id="live-time" class="live-time">00:00:00</div>
                 <div id="live-date" class="live-date">Загрузка даты...</div>
-            </div>
-
-            <h2>Настройки</h2>
-            <button id="settings-btn">⚙️ Параметры фона</button>
-            
-            <div id="theme-menu" class="hidden">
-                <p>Градиенты:</p>
-                <button class="theme-option" data-bg="bg-1">Градиент 1</button>
-                <button class="theme-option" data-bg="bg-2">Градиент 2</button>
-                <button class="theme-option" data-bg="bg-3">Тёмный</button>
-                
-                <p style="margin-top: 10px;">Свой файл (Фото / MP4):</p>
-                <input type="file" id="bg-file-input" accept="image/*, video/mp4">
-                
-                <p style="margin-top: 10px;">Или по ссылке (картинка или mp4):</p>
-                <input type="text" id="bg-url-input" placeholder="https://... (.jpg, .png или .mp4)">
-                <button id="apply-url-btn">Применить ссылку</button>
-
-                <p style="margin-top: 15px;">Размытие стекла (<span id="blur-value">16</span>px):</p>
-                <input type="range" id="blur-range" min="0" max="40" value="16">
-
-                <p style="margin-top: 10px;">Затемнение фона (<span id="darkness-value">30</span>%):</p>
-                <input type="range" id="darkness-range" min="0" max="80" value="30">
             </div>
         </aside>
 
