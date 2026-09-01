@@ -12,7 +12,7 @@ body {
     align-items: center;
     color: #fff;
     overflow: hidden;
-    background: #121212; /* Строгий темно-серый фон */
+    background: #121212;
     position: relative;
 }
 
@@ -29,18 +29,19 @@ body {
 .app-container {
     display: flex;
     gap: 20px;
-    width: 900px;
+    width: 1150px; /* Увеличена общая ширина */
     max-width: 95%;
-    height: 600px;
+    height: 650px; /* Увеличена высота */
 }
 
 /* Боковая панель с часами */
 .sidebar {
-    width: 250px;
-    padding: 20px;
+    width: 280px;
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Смещаем содержимое к верху */
+    padding-top: 60px; /* Отступ сверху для часов */
 }
 
 .live-clock-container {
@@ -60,8 +61,8 @@ body {
 
 /* Календарь */
 .calendar-main {
-    flex: 1;
-    padding: 20px;
+    flex: 1; /* Календарь автоматически займет всё оставшееся пространство и станет шире */
+    padding: 25px;
     display: flex;
     flex-direction: column;
 }
@@ -96,13 +97,13 @@ body {
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
     flex: 1;
-    gap: 6px;
+    gap: 8px; /* Чуть увеличили отступы между ячейками */
 }
 
 .day-cell {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
-    padding: 8px;
+    padding: 10px;
     cursor: pointer;
     transition: 0.2s;
     display: flex;
