@@ -1,7 +1,8 @@
 {
-  "name": "college_organizer",
+  "name": "calendar-telegram-app",
   "version": "1.0.0",
-  "scripts": {
-    "build": "echo 'Build completed'"
+  "description": "Calendar app with Telegram alarms",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
   }
 }
