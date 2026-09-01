@@ -10,134 +10,97 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #fff;
     overflow: hidden;
     position: relative;
-    background-color: #1a1a1a;
 }
+
+/* Фоны и подложки */
+body.bg-1 { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+body.bg-2 { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+body.bg-3 { background: #121212; }
 
 .media-bg-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     z-index: -2;
     overflow: hidden;
 }
 
-.media-bg-container img,
-.media-bg-container video {
+.media-bg-container img, .media-bg-container video {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* Затемняющий слой поверх видео/картинки */
 .bg-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    opacity: var(--bg-darkness, 0.3);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.3);
     z-index: -1;
     pointer-events: none;
-    transition: opacity 0.1s ease;
 }
 
-body.bg-1 { background: radial-gradient(circle at top left, #2b32b2, #1488cc); }
-body.bg-2 { background: radial-gradient(circle at top left, #ff416c, #ff4b2b); }
-body.bg-3 { background: radial-gradient(circle at top left, #232526, #414345); }
+/* Эффект стекла */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 16px;
+}
 
 .app-container {
     display: flex;
-    gap: 30px;
-    width: 95vw;
-    max-width: 1650px;
-    height: 85vh;
-    max-height: 900px;
+    gap: 20px;
+    width: 900px;
+    max-width: 95%;
+    height: 600px;
 }
 
-.glass {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(var(--glass-blur, 16px));
-    -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.5);
-    color: #fff;
-    padding: 28px;
-}
-
+/* Боковая панель */
 .sidebar {
-    width: 320px;
+    width: 280px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 15px;
 }
 
 .live-clock-container {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 16px;
     text-align: center;
-    margin-bottom: 4px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .live-time {
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #ffffff;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 .live-date {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.65);
-    margin-top: 4px;
-    text-transform: capitalize;
+    opacity: 0.8;
 }
 
 .sidebar h2 {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    margin-top: 5px;
 }
 
-.sidebar button, .theme-option {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s;
-    text-align: left;
-}
-
-.sidebar button:hover, .theme-option:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.sidebar input[type="text"] {
+.sidebar button, .modal-buttons button {
     padding: 10px;
+    border: none;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
-    width: 100%;
-}
-
-.sidebar input[type="file"] {
-    font-size: 12px;
-    color: white;
-}
-
-.sidebar input[type="range"] {
-    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar button:hover, .modal-buttons button:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .hidden {
@@ -148,10 +111,24 @@ body.bg-3 { background: radial-gradient(circle at top left, #232526, #414345); }
     display: flex;
     flex-direction: column;
     gap: 8px;
+    font-size: 14px;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
+#theme-menu input[type="text"], #theme-menu input[type="file"] {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    font-size: 12px;
+}
+
+/* Календарь */
 .calendar-main {
-    flex: 3;
+    flex: 1;
+    padding: 20px;
     display: flex;
     flex-direction: column;
 }
@@ -160,171 +137,98 @@ body.bg-3 { background: radial-gradient(circle at top left, #232526, #414345); }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-}
-
-.calendar-header h1 {
-    font-size: 28px;
-    font-weight: 600;
+    margin-bottom: 15px;
 }
 
 .calendar-header button {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
+    background: none;
+    border: none;
+    color: #fff;
     font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-}
-
-.calendar-header button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    padding: 5px 10px;
 }
 
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 14px;
-    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     flex: 1;
-    gap: 14px;
+    gap: 5px;
 }
 
 .day-cell {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
     cursor: pointer;
     transition: 0.2s;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    justify-content: space-between;
+    font-size: 14px;
 }
 
 .day-cell:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.day-cell.inactive {
+    opacity: 0.3;
 }
 
 .day-cell.today {
-    background: rgba(76, 209, 55, 0.12);
-    border: 1px solid rgba(76, 209, 55, 0.5);
+    border: 2px solid #fff;
 }
 
-.day-cell.today .day-number {
-    color: #4cd137;
-}
-
-.day-cell.disabled {
-    opacity: 0.2;
-    cursor: default;
-}
-
-.day-cell.disabled:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.day-number {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 6px;
-}
-
-.day-note-preview {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(0, 0, 0, 0.3);
-    padding: 4px 8px;
-    border-radius: 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-}
-
+/* Модальное окно */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 10;
+}
+
+.modal.hidden {
+    display: none;
 }
 
 .modal-content {
-    width: 450px;
+    width: 350px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 15px;
 }
 
 .modal-content textarea {
     width: 100%;
-    height: 120px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    color: white;
-    padding: 12px;
-    resize: none;
-}
-
-.alarm-section {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 14px;
-}
-
-.alarm-section input {
-    padding: 8px;
+    height: 100px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
+    padding: 10px;
+    color: #fff;
+    resize: none;
 }
 
 .modal-buttons {
     display: flex;
-    gap: 12px;
-    justify-content: flex-end;
+    gap: 10px;
 }
 
 .modal-buttons button {
-    padding: 10px 18px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-#save-note-btn {
-    background: #4cd137;
-    color: white;
-}
-
-#close-modal-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    flex: 1;
 }
