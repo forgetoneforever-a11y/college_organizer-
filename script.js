@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (savedBlur) {
-        document.documentElement.style.setProperty('--glass-blur', savedBlur + 'px');
         document.querySelectorAll('.glass').forEach(el => el.style.backdropFilter = `blur(${savedBlur}px)`);
         document.getElementById('blur-range').value = savedBlur;
         document.getElementById('blur-value').textContent = savedBlur;
@@ -52,19 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Загрузка файла с ПК с сохранением в Base64 (чтобы не пропадало после F5)
+    // Загрузка файла с ПК через временную ссылку (без ограничения по размеру localStorage)
     const fileInput = document.getElementById('bg-file-input');
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const result = event.target.result;
-                setMediaBackground(result, file.type.startsWith('video'));
-                localStorage.setItem('customBg', result);
-                localStorage.removeItem('themeClass');
-            };
-            reader.readAsDataURL(file);
+            const fileUrl = URL.createObjectURL(file);
+            setMediaBackground(fileUrl, file.type.startsWith('video'));
+            localStorage.setItem('customBgName', file.name);
+            localStorage.removeItem('themeClass');
         }
     });
 
