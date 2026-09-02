@@ -15,17 +15,166 @@ document.addEventListener('DOMContentLoaded', () => {
     const spotifyWidget = document.getElementById('spotify-widget');
     const glassElements = document.querySelectorAll('.glass, .app-header, .sidebar, .calendar-main, .modal-content');
 
-    // Гарантированно скрываем модалку настроек при старте
-    if (settingsModal) {
-        settingsModal.classList.add('hidden');
+    // Элементы часов и календаря
+    const liveTimeEl = document.getElementById('live-time');
+    const liveDateEl = document.getElementById('live-date');
+    const monthYearEl = document.getElementById('month-year');
+    const daysGrid = document.getElementById('days-grid');
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+
+    // Элементы модального окна заметок
+    const noteModal = document.getElementById('note-modal');
+    const noteModalDate = document.getElementById('note-modal-date');
+    const noteTextarea = document.getElementById('note-textarea');
+    const saveNoteBtn = document.getElementById('save-note-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Вкладки
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // Переключение вкладок
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-tab') + '-section';
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) targetContent.classList.add('active');
+        });
+    });
+
+    // Живые часы и дата
+    function updateClock() {
+        const now = new Date();
+        if (liveTimeEl) {
+            liveTimeEl.textContent = now.toTimeString().split(' ')[0];
+        }
+        if (liveDateEl) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            liveDateEl.textContent = now.toLocaleDateString('ru-RU', options);
+        }
     }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Календарь
+    let currentDate = new Date();
+    let selectedDateStr = '';
+    const monthsNames = [
+        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+
+    function renderCalendar() {
+        if (!monthYearEl || !daysGrid) return;
+        
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        monthYearEl.textContent = `${monthsNames[month]} ${year}`;
+        daysGrid.innerHTML = '';
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const adjustedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1; // Понедельник первый
+        const totalDays = new Date(year, month + 1, 0).getDate();
+        const prevTotalDays = new Date(year, month, 0).getDate();
+
+        const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
+
+        // Дни предыдущего месяца
+        for (let i = adjustedFirstDay; i > 0; i--) {
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add('calendar-day', 'inactive');
+            dayDiv.textContent = prevTotalDays - i + 1;
+            daysGrid.appendChild(dayDiv);
+        }
+
+        // Дни текущего месяца
+        const today = new Date();
+        for (let i = 1; i <= totalDays; i++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add('calendar-day');
+            dayDiv.textContent = i;
+
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
+            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayDiv.classList.add('today');
+            }
+
+            if (notes[dateStr]) {
+                dayDiv.classList.add('has-note');
+            }
+
+            dayDiv.addEventListener('click', () => {
+                selectedDateStr = dateStr;
+                if (noteModalDate) noteModalDate.textContent = `Заметка на ${i} ${monthsNames[month]} ${year}`;
+                if (noteTextarea) noteTextarea.value = notes[dateStr] || '';
+                if (noteModal) noteModal.classList.remove('hidden');
+            });
+
+            daysGrid.appendChild(dayDiv);
+        }
+
+        // Дни следующего месяца для заполнения сетки
+        const totalCells = adjustedFirstDay + totalDays;
+        const nextDaysCount = (totalCells <= 35) ? (35 - totalCells) : (42 - totalCells);
+        for (let i = 1; i <= nextDaysCount; i++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add('calendar-day', 'inactive');
+            dayDiv.textContent = i;
+            daysGrid.appendChild(dayDiv);
+        }
+    }
+
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+
+    renderCalendar();
+
+    // Управление модальным окном заметок
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener('click', () => {
+            const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
+            const text = noteTextarea.value.trim();
+            if (text) {
+                notes[selectedDateStr] = text;
+            } else {
+                delete notes[selectedDateStr];
+            }
+            localStorage.setItem('calendarNotes', JSON.stringify(notes));
+            if (noteModal) noteModal.classList.add('hidden');
+            renderCalendar();
+        });
+    }
+
+    if (closeModalBtn && noteModal) {
+        closeModalBtn.addEventListener('click', () => noteModal.classList.add('hidden'));
+    }
+
+    // Гарантированно скрываем модалки при старте
+    if (settingsModal) settingsModal.classList.add('hidden');
+    if (noteModal) noteModal.classList.add('hidden');
 
     // Загрузка сохраненных настроек из localStorage
     const savedDiscordId = localStorage.getItem('discordId') || '';
     const savedBgUrl = localStorage.getItem('bgUrl') || '';
     const savedBlur = localStorage.getItem('blurValue') || '12';
 
-    // Инициализация полей ввода текущими значениями
     if (discordIdInput) discordIdInput.value = savedDiscordId;
     if (bgUrlInput) bgUrlInput.value = savedBgUrl;
     if (blurRangeInput) {
@@ -33,12 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (blurValueSpan) blurValueSpan.textContent = savedBlur;
     }
 
-    // Применение настроек при старте
     applyBackground(savedBgUrl);
     applyBlur(savedBlur);
     setupSpotify(savedDiscordId);
 
-    // Управление модальным окном настроек (открытие)
+    // Управление модальным окном настроек
     if (settingsBtn && settingsModal) {
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -46,14 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Закрытие модального окна настроек
     if (closeSettingsBtn && settingsModal) {
         closeSettingsBtn.addEventListener('click', () => {
             settingsModal.classList.add('hidden');
         });
     }
 
-    // Закрытие по клику вне модального окна
     if (settingsModal) {
         settingsModal.addEventListener('click', (e) => {
             if (e.target === settingsModal) {
@@ -62,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ползунок размытия в реальном времени
     if (blurRangeInput) {
         blurRangeInput.addEventListener('input', (e) => {
             const val = e.target.value;
@@ -71,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Сохранение настроек
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
             const newDiscordId = discordIdInput ? discordIdInput.value.trim() : '';
@@ -90,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Функция применения фона
     function applyBackground(url) {
         if (!bgVideo || !bgImage) return;
         if (!url) {
@@ -114,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Функция применения размытия
     function applyBlur(val) {
         document.documentElement.style.setProperty('--glass-blur', `${val}px`);
         glassElements.forEach(el => {
@@ -123,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Подключение к Lanyard WebSocket для Spotify
     let lanyardWs = null;
     function setupSpotify(discordId) {
         if (!discordId) {
@@ -172,9 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (spotifyWidget) spotifyWidget.classList.add('hidden');
                         }
                     }
-                } catch (e) {
-                    // Игнорируем ошибки парсинга
-                }
+                } catch (e) {}
             };
         } catch (e) {
             if (spotifyWidget) spotifyWidget.classList.add('hidden');
