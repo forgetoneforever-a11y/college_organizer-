@@ -304,11 +304,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video') || !url.startsWith('http')) {
+        if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video')) {
             bgVideo.src = url;
             bgVideo.classList.remove('hidden');
             bgImage.classList.add('hidden');
-            bgVideo.play().catch(e => console.log("Автоплей видео заблокирован:", e));
+            bgVideo.play().catch(() => {});
         } else {
             bgImage.style.backgroundImage = `url('${url}')`;
             bgImage.classList.remove('hidden');
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Подключение к Lanyard WebSocket для Spotify
+    // Безопасное подключение к Lanyard WebSocket для Spotify
     function setupSpotify(discordId) {
         if (!discordId) {
             if (spotifyWidget) spotifyWidget.classList.add('hidden');
@@ -349,6 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             window.lanyardWsInstance.onerror = () => {
+                if (spotifyWidget) spotifyWidget.classList.add('hidden');
+            };
+
+            window.lanyardWsInstance.onclose = () => {
                 if (spotifyWidget) spotifyWidget.classList.add('hidden');
             };
 
