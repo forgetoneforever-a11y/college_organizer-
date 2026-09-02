@@ -17,7 +17,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Стили для фонового фото / видео */
+/* Стили для фонового фото / видео (pointer-events: none отключает перекрытие кликов) */
 .bg-media {
     position: fixed;
     top: 0;
@@ -26,12 +26,13 @@ body {
     height: 100vh;
     object-fit: cover;
     z-index: -1;
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 #bg-image {
     background-size: cover;
     background-position: center;
+    pointer-events: none !important;
 }
 
 .hidden {
@@ -47,7 +48,7 @@ body {
     z-index: 1;
 }
 
-/* Динамический класс стекла с переменной размытия */
+/* Динамическое стекло с переменной размытия */
 .glass {
     background: rgba(30, 41, 59, 0.65);
     backdrop-filter: blur(var(--glass-blur, 12px));
