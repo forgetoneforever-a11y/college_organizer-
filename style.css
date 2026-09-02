@@ -1,27 +1,49 @@
-/* Базовые настройки */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1a202c;
-    color: #fff;
+/* Основные стили и мягкий темный фон */
+* {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .app-wrapper {
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-/* Шапка и вкладки */
+/* Эффект стекла (Glassmorphism) */
+.glass {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Шапка с вкладками */
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    background: rgba(30, 35, 45, 0.75);
-    padding: 12px 20px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
+    padding: 15px 25px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
 }
 
 .nav-tabs {
@@ -30,62 +52,254 @@ body {
 }
 
 .tab-btn {
-    background: rgba(45, 55, 72, 0.6);
-    border: none;
-    color: #a0aec0;
-    padding: 8px 16px;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    padding: 8px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
-.tab-btn.active {
-    background: #3182ce;
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
 }
 
+.tab-btn.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
 .status-widget {
-    font-size: 13px;
-    color: #cbd5e0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 /* Содержимое вкладок */
 .tab-content {
     display: none;
 }
+
 .tab-content.active {
     display: block;
 }
 
-/* Стили секции расписания */
-.schedule-container, #schedule-section {
-    background: rgba(30, 35, 45, 0.75);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* Вкладка календаря */
+.app-container {
+    display: flex;
+    gap: 20px;
 }
 
-.schedule-header {
+.sidebar {
+    width: 260px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.live-time {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #38bdf8;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.live-date {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-top: 5px;
+}
+
+.calendar-main {
+    flex: 1;
+    padding: 25px;
+}
+
+.calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.schedule-header h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
+.calendar-header button {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-.schedule-header .badge {
-    background: rgba(70, 130, 180, 0.4);
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
+.calendar-header button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.calendar-day.inactive {
+    color: #475569;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.today {
+    border-color: #38bdf8;
+    color: #38bdf8;
+    font-weight: bold;
+}
+
+.calendar-day.has-note::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: #f43f5e;
+    border-radius: 50%;
+    margin-top: 4px;
+    box-shadow: 0 0 8px #f43f5e;
+}
+
+/* Модальное окно */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content h3 {
+    color: #f8fafc;
+    font-size: 1.2rem;
+}
+
+.modal-content textarea {
+    width: 100%;
+    height: 120px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    resize: vertical;
+    outline: none;
+}
+
+.modal-content textarea:focus {
+    border-color: #3b82f6;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+#save-note-btn {
+    background: #3b82f6;
+    color: #fff;
+}
+
+#close-modal-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+/* Вкладка расписания */
+#schedule-section {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.schedule-header {
+    margin-bottom: 20px;
+}
+
+.badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .table-responsive {
@@ -95,107 +309,64 @@ body {
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
 .schedule-table th, .schedule-table td {
-    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
 }
 
 .schedule-table th {
-    background: rgba(45, 55, 72, 0.8);
-    font-size: 14px;
-    font-weight: 500;
+    background: rgba(15, 23, 42, 0.5);
+    color: #94a3b8;
+    font-size: 0.9rem;
 }
 
-.schedule-table td.time-cell {
-    font-size: 12px;
-    color: #cbd5e0;
-    white-space: nowrap;
-    background: rgba(26, 32, 44, 0.4);
+.time-cell {
+    color: #38bdf8;
+    font-weight: 500;
+    font-size: 0.85rem;
 }
 
 .schedule-input {
     width: 100%;
-    background: transparent;
-    border: none;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 8px;
     color: #fff;
     text-align: center;
-    font-size: 13px;
     outline: none;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background 0.2s;
+    transition: border-color 0.2s;
 }
 
 .schedule-input:focus {
-    background: rgba(255, 255, 255, 0.1);
+    border-color: #3b82f6;
+    background: rgba(15, 23, 42, 0.7);
 }
 
 .schedule-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 10px;
+    gap: 12px;
 }
 
-.btn-dark {
-    background: #2d3748;
-    color: white;
-    border: none;
+.schedule-actions button {
     padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.btn-blue {
-    background: #3182ce;
-    color: white;
+    border-radius: 10px;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    color: #fff;
+    transition: opacity 0.2s, transform 0.1s;
 }
 
-.btn-red {
-    background: #e53e3e;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
+.schedule-actions button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
-/* МОБИЛЬНАЯ АДАПТАЦИЯ (для телефонов) */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .app-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-
-    .nav-tabs {
-        justify-content: center;
-    }
-
-    .schedule-table th, .schedule-table td {
-        padding: 6px 4px;
-        font-size: 11px;
-    }
-
-    .schedule-actions {
-        flex-direction: column;
-    }
-
-    .schedule-actions button {
-        width: 100%;
-    }
-}
+.btn-dark { background: #334155; }
+.btn-blue { background: #2563eb; }
+.btn-red { background: #dc2626; }
