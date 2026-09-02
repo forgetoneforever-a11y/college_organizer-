@@ -326,34 +326,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Подключение к Lanyard WebSocket для Spotify
-    let lanyardWs = null;
     function setupSpotify(discordId) {
         if (!discordId) {
             if (spotifyWidget) spotifyWidget.classList.add('hidden');
             return;
         }
 
-        if (lanyardWs) {
-            try { lanyardWs.close(); } catch (e) {}
+        if (window.lanyardWsInstance) {
+            try { window.lanyardWsInstance.close(); } catch (e) {}
         }
 
         try {
-            lanyardWs = new WebSocket('wss://api.lanyard.rest/socket');
+            window.lanyardWsInstance = new WebSocket('wss://api.lanyard.rest/socket');
 
-            lanyardWs.onopen = () => {
-                if (lanyardWs.readyState === WebSocket.OPEN) {
-                    lanyardWs.send(JSON.stringify({
+            window.lanyardWsInstance.onopen = () => {
+                if (window.lanyardWsInstance.readyState === WebSocket.OPEN) {
+                    window.lanyardWsInstance.send(JSON.stringify({
                         op: 2,
                         d: { subscribe_to_id: discordId }
                     }));
                 }
             };
 
-            lanyardWs.onerror = () => {
+            window.lanyardWsInstance.onerror = () => {
                 if (spotifyWidget) spotifyWidget.classList.add('hidden');
             };
 
-            lanyardWs.onmessage = (event) => {
+            window.lanyardWsInstance.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
                     if (data.t === 'INIT_STATE' || data.t === 'PRESENCE_UPDATE') {
