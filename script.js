@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    // Скрываем виджет Spotify навсегда, так как модуль удален
+    if (spotifyWidget) spotifyWidget.classList.add('hidden');
+
     // Переключение вкладок
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -230,11 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (noteModal) noteModal.classList.add('hidden');
 
     // Загрузка настроек интерфейса
-    const savedDiscordId = localStorage.getItem('discordId') || '';
-    const savedBgUrl = localStorage.getItem('bgUrl') || '';
+    const savedBgUrl = localStorage.getItem('bgUrl') || 'bg.mp4';
     const savedBlur = localStorage.getItem('blurValue') || '12';
 
-    if (discordIdInput) discordIdInput.value = savedDiscordId;
     if (bgUrlInput) bgUrlInput.value = savedBgUrl;
     if (blurRangeInput) {
         blurRangeInput.value = savedBlur;
@@ -243,7 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyBackground(savedBgUrl);
     applyBlur(savedBlur);
-    setupSpotify(savedDiscordId);
 
     // Управление модальным окном настроек
     if (settingsBtn && settingsModal) {
@@ -277,17 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
-            const newDiscordId = discordIdInput ? discordIdInput.value.trim() : '';
-            const newBgUrl = bgUrlInput ? bgUrlInput.value.trim() : '';
+            const newBgUrl = bgUrlInput ? bgUrlInput.value.trim() : 'bg.mp4';
             const newBlur = blurRangeInput ? blurRangeInput.value : '12';
 
-            localStorage.setItem('discordId', newDiscordId);
             localStorage.setItem('bgUrl', newBgUrl);
             localStorage.setItem('blurValue', newBlur);
 
             applyBackground(newBgUrl);
             applyBlur(newBlur);
-            setupSpotify(newDiscordId);
 
             if (settingsModal) settingsModal.classList.add('hidden');
         });
@@ -296,15 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyBackground(url) {
         if (!bgVideo || !bgImage) return;
         if (!url || url.trim() === '') {
-            bgVideo.pause();
-            bgVideo.removeAttribute('src');
-            bgVideo.load();
-            bgVideo.classList.add('hidden');
-            bgImage.classList.add('hidden');
-            return;
+            url = 'bg.mp4';
         }
 
-        if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video')) {
+        if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video') || !url.startsWith('http')) {
             bgVideo.src = url;
             bgVideo.classList.remove('hidden');
             bgImage.classList.add('hidden');
@@ -323,64 +315,5 @@ document.addEventListener('DOMContentLoaded', () => {
             el.style.backdropFilter = `blur(${val}px)`;
             el.style.webkitBackdropFilter = `blur(${val}px)`;
         });
-    }
-
-    // Безопасное подключение к Lanyard WebSocket для Spotify
-    function setupSpotify(discordId) {
-        if (!discordId) {
-            if (spotifyWidget) spotifyWidget.classList.add('hidden');
-            return;
-        }
-
-        if (window.lanyardWsInstance) {
-            try { window.lanyardWsInstance.close(); } catch (e) {}
-        }
-
-        try {
-            window.lanyardWsInstance = new WebSocket('wss://api.lanyard.rest/socket');
-
-            window.lanyardWsInstance.onopen = () => {
-                if (window.lanyardWsInstance.readyState === WebSocket.OPEN) {
-                    window.lanyardWsInstance.send(JSON.stringify({
-                        op: 2,
-                        d: { subscribe_to_id: discordId }
-                    }));
-                }
-            };
-
-            window.lanyardWsInstance.onerror = () => {
-                if (spotifyWidget) spotifyWidget.classList.add('hidden');
-            };
-
-            window.lanyardWsInstance.onclose = () => {
-                if (spotifyWidget) spotifyWidget.classList.add('hidden');
-            };
-
-            window.lanyardWsInstance.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.t === 'INIT_STATE' || data.t === 'PRESENCE_UPDATE') {
-                        const presence = data.d;
-                        if (presence && presence.spotify && presence.listening_to_spotify) {
-                            const sp = presence.spotify;
-                            
-                            const songEl = document.getElementById('sp-song');
-                            const artistEl = document.getElementById('sp-artist');
-                            const artEl = document.getElementById('sp-album-art');
-
-                            if (songEl) songEl.textContent = sp.song;
-                            if (artistEl) artistEl.textContent = sp.artist;
-                            if (artEl) artEl.src = sp.album_art_url;
-
-                            if (spotifyWidget) spotifyWidget.classList.remove('hidden');
-                        } else {
-                            if (spotifyWidget) spotifyWidget.classList.add('hidden');
-                        }
-                    }
-                } catch (e) {}
-            };
-        } catch (e) {
-            if (spotifyWidget) spotifyWidget.classList.add('hidden');
-        }
     }
 });
