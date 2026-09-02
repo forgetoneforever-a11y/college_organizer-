@@ -1,102 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Элементы интерфейса
-    const settingsBtn = document.getElementById('open-settings-btn');
-    const settingsModal = document.getElementById('settings-modal');
-    const closeSettingsBtn = document.getElementById('close-settings-btn');
-    const saveSettingsBtn = document.getElementById('save-settings-btn');
-    
-    const discordIdInput = document.getElementById('setting-discord-id');
-    const bgUrlInput = document.getElementById('setting-bg-url');
-    const blurRangeInput = document.getElementById('setting-blur-range');
-    const blurValueSpan = document.getElementById('blur-value');
-
-    const bgVideo = document.getElementById('bg-video');
-    const bgImage = document.getElementById('bg-image');
-    const spotifyWidget = document.getElementById('spotify-widget');
-    const glassElements = document.querySelectorAll('.glass, .app-header, .sidebar, .calendar-main, .modal-content');
-
-    // Элементы часов и календаря
-    const liveTimeEl = document.getElementById('live-time');
-    const liveDateEl = document.getElementById('live-date');
-    const monthYearEl = document.getElementById('month-year');
-    const daysGrid = document.getElementById('days-grid');
-    const prevMonthBtn = document.getElementById('prev-month');
-    const nextMonthBtn = document.getElementById('next-month');
-
-    // Элементы модального окна заметок и будильника
-    const noteModal = document.getElementById('note-modal');
-    const modalDateTitle = document.getElementById('modal-date-title');
-    const noteTextarea = document.getElementById('note-text');
-    const alarmDateInput = document.getElementById('alarm-date');
-    const alarmTimeInput = document.getElementById('alarm-time');
-    const saveNoteBtn = document.getElementById('save-note-btn');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-
-    // Расписание
-    const scheduleInputs = document.querySelectorAll('.schedule-input');
-    const saveScheduleBtn = document.getElementById('save-schedule-btn');
-    const exportPdfBtn = document.getElementById('export-pdf-btn');
-    const clearScheduleBtn = document.getElementById('clear-schedule-btn');
-
-    // Вкладки
+    // --- Управление вкладками ---
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // Скрываем виджет Spotify навсегда, так как модуль удален
-    if (spotifyWidget) spotifyWidget.classList.add('hidden');
-
-    // Переключение вкладок
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
+
             btn.classList.add('active');
-            const targetId = btn.getAttribute('data-tab');
-            const targetContent = document.getElementById(targetId);
-            if (targetContent) targetContent.classList.add('active');
+            const tabId = btn.getAttribute('data-tab') + '-tab';
+            document.getElementById(tabId).classList.add('active');
         });
     });
 
-    // Живые часы и дата
+    // --- Живые часы ---
     function updateClock() {
         const now = new Date();
-        if (liveTimeEl) {
-            liveTimeEl.textContent = now.toTimeString().split(' ')[0];
-        }
-        if (liveDateEl) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            liveDateEl.textContent = now.toLocaleDateString('ru-RU', options);
-        }
+        const timeString = now.toLocaleTimeString('ru-RU');
+        const dateString = now.toLocaleDateString('ru-RU', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        const timeEl = document.getElementById('live-time');
+        const dateEl = document.getElementById('live-date');
+        if (timeEl) timeEl.textContent = timeString;
+        if (dateEl) dateEl.textContent = dateString;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Календарь
+    // --- Календарь ---
     let currentDate = new Date();
-    let selectedDateStr = '';
-    const monthsNames = [
-        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-    ];
+    const daysGrid = document.getElementById('days-grid');
+    const monthYearDisplay = document.getElementById('month-year-display');
 
     function renderCalendar() {
-        if (!monthYearEl || !daysGrid) return;
-        
+        if (!daysGrid) return;
+        daysGrid.innerHTML = '';
+
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
 
-        monthYearEl.textContent = `${monthsNames[month]} ${year}`;
-        daysGrid.innerHTML = '';
+        const monthsNames = [
+            'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        ];
+        monthYearDisplay.textContent = `${monthsNames[month]} ${year}`;
 
-        const firstDayIndex = new Date(year, month, 1).getDay();
-        const adjustedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+        // Первый день месяца и общее количество дней
+        const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
         const totalDays = new Date(year, month + 1, 0).getDate();
         const prevTotalDays = new Date(year, month, 0).getDate();
 
-        const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
+        const notes = JSON.parse(localStorage.getItem('calendar_notes') || '{}');
+        const today = new Date();
 
         // Дни предыдущего месяца
-        for (let i = adjustedFirstDay; i > 0; i--) {
+        for (let i = firstDayIndex; i > 0; i--) {
             const dayDiv = document.createElement('div');
             dayDiv.classList.add('calendar-day', 'inactive');
             dayDiv.textContent = prevTotalDays - i + 1;
@@ -104,216 +68,119 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Дни текущего месяца
-        const today = new Date();
         for (let i = 1; i <= totalDays; i++) {
             const dayDiv = document.createElement('div');
             dayDiv.classList.add('calendar-day');
             dayDiv.textContent = i;
 
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
+            // Проверка на сегодняшний день
             if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 dayDiv.classList.add('today');
             }
 
-            if (notes[dateStr]) {
+            // Наличие заметок
+            if (notes[dateKey]) {
                 dayDiv.classList.add('has-note');
             }
 
-            dayDiv.addEventListener('click', () => {
-                selectedDateStr = dateStr;
-                if (modalDateTitle) modalDateTitle.textContent = `Заметки на ${i} ${monthsNames[month]} ${year}`;
-                
-                const noteData = notes[dateStr];
-                if (typeof noteData === 'object' && noteData !== null) {
-                    if (noteTextarea) noteTextarea.value = noteData.text || '';
-                    if (alarmDateInput) alarmDateInput.value = noteData.alarmDate || '';
-                    if (alarmTimeInput) alarmTimeInput.value = noteData.alarmTime || '';
-                } else {
-                    if (noteTextarea) noteTextarea.value = noteData || '';
-                    if (alarmDateInput) alarmDateInput.value = '';
-                    if (alarmTimeInput) alarmTimeInput.value = '';
-                }
-
-                if (noteModal) noteModal.classList.remove('hidden');
-            });
+            // Клик по дню для открытия заметок
+            dayDiv.addEventListener('click', () => openNoteModal(dateKey, i, monthsNames[month], year));
 
             daysGrid.appendChild(dayDiv);
         }
-
-        // Дни следующего месяца
-        const totalCells = adjustedFirstDay + totalDays;
-        const nextDaysCount = (totalCells <= 35) ? (35 - totalCells) : (42 - totalCells);
-        for (let i = 1; i <= nextDaysCount; i++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.classList.add('calendar-day', 'inactive');
-            dayDiv.textContent = i;
-            daysGrid.appendChild(dayDiv);
-        }
     }
 
-    if (prevMonthBtn) {
-        prevMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        });
-    }
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
 
-    if (nextMonthBtn) {
-        nextMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        });
-    }
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
 
     renderCalendar();
 
-    // Сохранение заметок и будильника
-    if (saveNoteBtn) {
-        saveNoteBtn.addEventListener('click', () => {
-            const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
-            const text = noteTextarea ? noteTextarea.value.trim() : '';
-            const alarmDate = alarmDateInput ? alarmDateInput.value : '';
-            const alarmTime = alarmTimeInput ? alarmTimeInput.value : '';
+    // --- Модальное окно заметок ---
+    const noteModal = document.getElementById('note-modal');
+    const noteModalDate = document.getElementById('note-modal-date');
+    const noteText = document.getElementById('note-text');
+    const closeNoteModal = document.getElementById('close-note-modal');
+    const saveNoteBtn = document.getElementById('save-note-btn');
+    let activeDateKey = '';
 
-            if (text || alarmDate || alarmTime) {
-                notes[selectedDateStr] = { text, alarmDate, alarmTime };
-            } else {
-                delete notes[selectedDateStr];
-            }
-
-            localStorage.setItem('calendarNotes', JSON.stringify(notes));
-            if (noteModal) noteModal.classList.add('hidden');
-            renderCalendar();
-        });
+    function openNoteModal(dateKey, day, monthName, year) {
+        activeDateKey = dateKey;
+        noteModalDate.textContent = `Заметки на ${day} ${monthName} ${year}`;
+        const notes = JSON.parse(localStorage.getItem('calendar_notes') || '{}');
+        noteText.value = notes[dateKey] || '';
+        noteModal.classList.remove('hidden');
     }
 
-    if (closeModalBtn && noteModal) {
-        closeModalBtn.addEventListener('click', () => noteModal.classList.add('hidden'));
+    closeNoteModal.addEventListener('click', () => noteModal.classList.add('hidden'));
+
+    saveNoteBtn.addEventListener('click', () => {
+        const notes = JSON.parse(localStorage.getItem('calendar_notes') || '{}');
+        if (noteText.value.trim() === '') {
+            delete notes[activeDateKey];
+        } else {
+            notes[activeDateKey] = noteText.value;
+        }
+        localStorage.setItem('calendar_notes', JSON.stringify(notes));
+        noteModal.classList.add('hidden');
+        renderCalendar();
+    });
+
+    // --- Модальное окно настроек ---
+    const settingsModal = document.getElementById('settings-modal');
+    const openSettingsBtn = document.getElementById('open-settings');
+    const closeSettingsBtn = document.getElementById('close-settings');
+    const saveSettingsBtn = document.getElementById('save-settings');
+    const bgUrlInput = document.getElementById('bg-url-input');
+    const blurRange = document.getElementById('blur-range');
+    const blurVal = document.getElementById('blur-val');
+
+    openSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+    closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+    blurRange.addEventListener('input', (e) => {
+        blurVal.textContent = e.target.value;
+        document.documentElement.style.setProperty('--glass-blur', e.target.value + 'px');
+    });
+
+    // Загрузка сохраненных настроек
+    const savedBg = localStorage.getItem('bg_url');
+    if (savedBg) {
+        bgUrlInput.value = savedBg;
+        applyBackground(savedBg);
     }
 
-    // Сохранение и загрузка расписания
-    const savedSchedule = JSON.parse(localStorage.getItem('collegeSchedule') || '{}');
-    if (scheduleInputs.length > 0) {
-        scheduleInputs.forEach((input, index) => {
-            if (savedSchedule[index] !== undefined) {
-                input.value = savedSchedule[index];
-            }
-        });
-    }
-
-    if (saveScheduleBtn) {
-        saveScheduleBtn.addEventListener('click', () => {
-            const scheduleData = {};
-            scheduleInputs.forEach((input, index) => {
-                scheduleData[index] = input.value;
-            });
-            localStorage.setItem('collegeSchedule', JSON.stringify(scheduleData));
-            alert('Расписание успешно сохранено!');
-        });
-    }
-
-    if (clearScheduleBtn) {
-        clearScheduleBtn.addEventListener('click', () => {
-            if (confirm('Очистить всё расписание?')) {
-                scheduleInputs.forEach(input => input.value = '');
-                localStorage.removeItem('collegeSchedule');
-            }
-        });
-    }
-
-    if (exportPdfBtn) {
-        exportPdfBtn.addEventListener('click', () => {
-            window.print();
-        });
-    }
-
-    // Инициализация модалок
-    if (settingsModal) settingsModal.classList.add('hidden');
-    if (noteModal) noteModal.classList.add('hidden');
-
-    // Загрузка настроек интерфейса
-    const savedBgUrl = localStorage.getItem('bgUrl') || 'bg.mp4';
-    const savedBlur = localStorage.getItem('blurValue') || '12';
-
-    if (bgUrlInput) bgUrlInput.value = savedBgUrl;
-    if (blurRangeInput) {
-        blurRangeInput.value = savedBlur;
-        if (blurValueSpan) blurValueSpan.textContent = savedBlur;
-    }
-
-    applyBackground(savedBgUrl);
-    applyBlur(savedBlur);
-
-    // Управление модальным окном настроек
-    if (settingsBtn && settingsModal) {
-        settingsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            settingsModal.classList.remove('hidden');
-        });
-    }
-
-    if (closeSettingsBtn && settingsModal) {
-        closeSettingsBtn.addEventListener('click', () => {
-            settingsModal.classList.add('hidden');
-        });
-    }
-
-    if (settingsModal) {
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === settingsModal) {
-                settingsModal.classList.add('hidden');
-            }
-        });
-    }
-
-    if (blurRangeInput) {
-        blurRangeInput.addEventListener('input', (e) => {
-            const val = e.target.value;
-            if (blurValueSpan) blurValueSpan.textContent = val;
-            applyBlur(val);
-        });
-    }
-
-    if (saveSettingsBtn) {
-        saveSettingsBtn.addEventListener('click', () => {
-            const newBgUrl = bgUrlInput ? bgUrlInput.value.trim() : 'bg.mp4';
-            const newBlur = blurRangeInput ? blurRangeInput.value : '12';
-
-            localStorage.setItem('bgUrl', newBgUrl);
-            localStorage.setItem('blurValue', newBlur);
-
-            applyBackground(newBgUrl);
-            applyBlur(newBlur);
-
-            if (settingsModal) settingsModal.classList.add('hidden');
-        });
-    }
+    saveSettingsBtn.addEventListener('click', () => {
+        const bgVal = bgUrlInput.value.trim();
+        localStorage.setItem('bg_url', bgVal);
+        applyBackground(bgVal);
+        settingsModal.classList.add('hidden');
+    });
 
     function applyBackground(url) {
-        if (!bgVideo || !bgImage) return;
-        if (!url || url.trim() === '') {
-            url = 'bg.mp4';
-        }
+        const videoEl = document.getElementById('bg-video');
+        const imageEl = document.getElementById('bg-image');
+        if (!url) return;
 
-        if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video') || !url.startsWith('http')) {
-            bgVideo.src = url;
-            bgVideo.classList.remove('hidden');
-            bgImage.classList.add('hidden');
-            bgVideo.play().catch(() => {});
+        if (url.endsWith('.mp4') || url.includes('raw.githubusercontent.com') && url.includes('.mp4')) {
+            videoEl.innerHTML = `<source src="${url}" type="video/mp4">`;
+            videoEl.load();
+            videoEl.classList.remove('hidden');
+            imageEl.classList.add('hidden');
         } else {
-            bgImage.style.backgroundImage = `url('${url}')`;
-            bgImage.classList.remove('hidden');
-            bgVideo.pause();
-            bgVideo.classList.add('hidden');
+            videoEl.classList.add('hidden');
+            imageEl.style.backgroundImage = `url('${url}')`;
+            imageEl.style.backgroundSize = 'cover';
+            imageEl.style.backgroundPosition = 'center';
+            imageEl.classList.remove('hidden');
         }
-    }
-
-    function applyBlur(val) {
-        document.documentElement.style.setProperty('--glass-blur', `${val}px`);
-        glassElements.forEach(el => {
-            el.style.backdropFilter = `blur(${val}px)`;
-            el.style.webkitBackdropFilter = `blur(${val}px)`;
-        });
     }
 });
