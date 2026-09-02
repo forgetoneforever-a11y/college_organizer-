@@ -1,4 +1,3 @@
-/* Основные стили и мягкий темный фон */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -18,13 +17,12 @@ body {
 
 .app-wrapper {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1450px; /* Увеличена общая ширина для простора */
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* Эффект стекла (Glassmorphism) */
 .glass {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
@@ -34,10 +32,9 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* Шапка с вкладками */
 .app-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 15px 25px;
     background: rgba(30, 41, 59, 0.7);
@@ -55,10 +52,11 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #94a3b8;
-    padding: 8px 20px;
+    padding: 10px 24px;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 0.95rem;
     transition: all 0.2s ease;
 }
 
@@ -74,13 +72,6 @@ body {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
-.status-widget {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-/* Содержимое вкладок */
 .tab-content {
     display: none;
 }
@@ -89,15 +80,14 @@ body {
     display: block;
 }
 
-/* Вкладка календаря */
 .app-container {
     display: flex;
     gap: 20px;
 }
 
 .sidebar {
-    width: 260px;
-    padding: 20px;
+    width: 280px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -106,36 +96,29 @@ body {
 }
 
 .live-time {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     color: #38bdf8;
     text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
 }
 
 .live-date {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #94a3b8;
-    margin-top: 5px;
+    margin-top: 8px;
 }
 
 .calendar-main {
     flex: 1;
-    padding: 25px;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    padding: 30px;
 }
 
 .calendar-header button {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.2s;
@@ -151,18 +134,18 @@ body {
     text-align: center;
     font-weight: 600;
     color: #64748b;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-size: 1rem;
 }
 
 .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 10px;
 }
 
 .calendar-day {
-    aspect-ratio: 1;
+    aspect-ratio: 1.2;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
@@ -172,6 +155,7 @@ body {
     align-items: center;
     cursor: pointer;
     font-weight: 500;
+    font-size: 1.05rem;
     transition: all 0.2s ease;
 }
 
@@ -198,7 +182,7 @@ body {
     height: 6px;
     background-color: #f43f5e;
     border-radius: 50%;
-    margin-top: 4px;
+    margin-top: 6px;
     box-shadow: 0 0 8px #f43f5e;
 }
 
@@ -215,18 +199,15 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    opacity: 1;
-    transition: opacity 0.3s ease;
 }
 
 .modal.hidden {
     display: none;
-    opacity: 0;
 }
 
 .modal-content {
     width: 100%;
-    max-width: 450px;
+    max-width: 480px;
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -235,12 +216,12 @@ body {
 
 .modal-content h3 {
     color: #f8fafc;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 .modal-content textarea {
     width: 100%;
-    height: 120px;
+    height: 130px;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
@@ -248,6 +229,7 @@ body {
     color: #fff;
     resize: vertical;
     outline: none;
+    font-size: 1rem;
 }
 
 .modal-content textarea:focus {
@@ -261,11 +243,12 @@ body {
 }
 
 .modal-buttons button {
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     font-weight: 600;
+    font-size: 0.95rem;
     transition: opacity 0.2s;
 }
 
@@ -279,26 +262,30 @@ body {
     color: #cbd5e1;
 }
 
-/* Вкладка расписания */
+/* Вкладка расписания (большая таблица) */
 #schedule-section {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    padding: 25px;
+    padding: 30px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .schedule-header {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.schedule-header h2 {
+    font-size: 1.5rem;
 }
 
 .badge {
     background: rgba(59, 130, 246, 0.2);
     color: #60a5fa;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
@@ -309,11 +296,11 @@ body {
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .schedule-table th, .schedule-table td {
-    padding: 10px;
+    padding: 14px 12px; /* Увеличены отступы для крупного размера */
     border: 1px solid rgba(255, 255, 255, 0.06);
     text-align: center;
 }
@@ -321,25 +308,26 @@ body {
 .schedule-table th {
     background: rgba(15, 23, 42, 0.5);
     color: #94a3b8;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .time-cell {
     color: #38bdf8;
-    font-weight: 500;
-    font-size: 0.85rem;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .schedule-input {
     width: 100%;
     background: rgba(15, 23, 42, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 6px;
-    padding: 8px;
+    border-radius: 8px;
+    padding: 10px;
     color: #fff;
     text-align: center;
     outline: none;
-    transition: border-color 0.2s;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, background 0.2s;
 }
 
 .schedule-input:focus {
@@ -353,11 +341,12 @@ body {
 }
 
 .schedule-actions button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     font-weight: 600;
+    font-size: 1rem;
     color: #fff;
     transition: opacity 0.2s, transform 0.1s;
 }
