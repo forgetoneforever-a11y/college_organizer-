@@ -23,12 +23,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
 
-    // Элементы модального окна заметок
+    // Элементы модального окна заметок и будильника
     const noteModal = document.getElementById('note-modal');
-    const noteModalDate = document.getElementById('note-modal-date');
-    const noteTextarea = document.getElementById('note-textarea');
+    const modalDateTitle = document.getElementById('modal-date-title');
+    const noteTextarea = document.getElementById('note-text');
+    const alarmDateInput = document.getElementById('alarm-date');
+    const alarmTimeInput = document.getElementById('alarm-time');
     const saveNoteBtn = document.getElementById('save-note-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Расписание
+    const scheduleInputs = document.querySelectorAll('.schedule-input');
+    const saveScheduleBtn = document.getElementById('save-schedule-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    const clearScheduleBtn = document.getElementById('clear-schedule-btn');
 
     // Вкладки
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -40,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             btn.classList.add('active');
-            const targetId = btn.getAttribute('data-tab') + '-section';
+            const targetId = btn.getAttribute('data-tab');
             const targetContent = document.getElementById(targetId);
             if (targetContent) targetContent.classList.add('active');
         });
@@ -111,8 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dayDiv.addEventListener('click', () => {
                 selectedDateStr = dateStr;
-                if (noteModalDate) noteModalDate.textContent = `Заметка на ${i} ${monthsNames[month]} ${year}`;
-                if (noteTextarea) noteTextarea.value = notes[dateStr] || '';
+                if (modalDateTitle) modalDateTitle.textContent = `Заметки на ${i} ${monthsNames[month]} ${year}`;
+                
+                const noteData = notes[dateStr];
+                if (typeof noteData === 'object' && noteData !== null) {
+                    if (noteTextarea) noteTextarea.value = noteData.text || '';
+                    if (alarmDateInput) alarmDateInput.value = noteData.alarmDate || '';
+                    if (alarmTimeInput) alarmTimeInput.value = noteData.alarmTime || '';
+                } else {
+                    if (noteTextarea) noteTextarea.value = noteData || '';
+                    if (alarmDateInput) alarmDateInput.value = '';
+                    if (alarmTimeInput) alarmTimeInput.value = '';
+                }
+
                 if (noteModal) noteModal.classList.remove('hidden');
             });
 
@@ -146,16 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCalendar();
 
-    // Заметки
+    // Сохранение заметок и будильника
     if (saveNoteBtn) {
         saveNoteBtn.addEventListener('click', () => {
             const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
-            const text = noteTextarea.value.trim();
-            if (text) {
-                notes[selectedDateStr] = text;
+            const text = noteTextarea ? noteTextarea.value.trim() : '';
+            const alarmDate = alarmDateInput ? alarmDateInput.value : '';
+            const alarmTime = alarmTimeInput ? alarmTimeInput.value : '';
+
+            if (text || alarmDate || alarmTime) {
+                notes[selectedDateStr] = { text, alarmDate, alarmTime };
             } else {
                 delete notes[selectedDateStr];
             }
+
             localStorage.setItem('calendarNotes', JSON.stringify(notes));
             if (noteModal) noteModal.classList.add('hidden');
             renderCalendar();
@@ -166,10 +189,47 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModalBtn.addEventListener('click', () => noteModal.classList.add('hidden'));
     }
 
+    // Сохранение и загрузка расписания
+    const savedSchedule = JSON.parse(localStorage.getItem('collegeSchedule') || '{}');
+    if (scheduleInputs.length > 0) {
+        scheduleInputs.forEach((input, index) => {
+            if (savedSchedule[index] !== undefined) {
+                input.value = savedSchedule[index];
+            }
+        });
+    }
+
+    if (saveScheduleBtn) {
+        saveScheduleBtn.addEventListener('click', () => {
+            const scheduleData = {};
+            scheduleInputs.forEach((input, index) => {
+                scheduleData[index] = input.value;
+            });
+            localStorage.setItem('collegeSchedule', JSON.stringify(scheduleData));
+            alert('Расписание успешно сохранено!');
+        });
+    }
+
+    if (clearScheduleBtn) {
+        clearScheduleBtn.addEventListener('click', () => {
+            if (confirm('Очистить всё расписание?')) {
+                scheduleInputs.forEach(input => input.value = '');
+                localStorage.removeItem('collegeSchedule');
+            }
+        });
+    }
+
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', () => {
+            window.print();
+        });
+    }
+
+    // Инициализация модалок
     if (settingsModal) settingsModal.classList.add('hidden');
     if (noteModal) noteModal.classList.add('hidden');
 
-    // Загрузка настроек
+    // Загрузка настроек интерфейса
     const savedDiscordId = localStorage.getItem('discordId') || '';
     const savedBgUrl = localStorage.getItem('bgUrl') || '';
     const savedBlur = localStorage.getItem('blurValue') || '12';
@@ -185,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyBlur(savedBlur);
     setupSpotify(savedDiscordId);
 
-    // Модальное окно настроек
+    // Управление модальным окном настроек
     if (settingsBtn && settingsModal) {
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
