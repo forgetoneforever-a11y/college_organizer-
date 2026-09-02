@@ -14,7 +14,7 @@ body {
     position: relative;
 }
 
-/* Фоновое видео и картинка на весь экран */
+/* Фоновое видео и картинка */
 #bg-video, #bg-image, .bg-media {
     position: fixed;
     top: 0;
@@ -101,6 +101,7 @@ body {
     display: none;
     gap: 16px;
     align-items: flex-start;
+    width: 100%;
 }
 
 .tab-content.active {
@@ -187,7 +188,7 @@ body {
 
 .calendar-day {
     position: relative;
-    aspect-ratio: 1;
+    aspect-ratio: 1.3;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
