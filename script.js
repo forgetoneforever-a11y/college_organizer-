@@ -1,131 +1,201 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Часы и дата
-    const liveTime = document.getElementById('live-time');
-    const liveDate = document.getElementById('live-date');
+/* Базовые настройки */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a202c;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+}
 
-    function updateClock() {
-        const now = new Date();
-        liveTime.textContent = now.toLocaleTimeString('ru-RU');
-        liveDate.textContent = now.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+.app-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Шапка и вкладки */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(30, 35, 45, 0.75);
+    padding: 12px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-btn {
+    background: rgba(45, 55, 72, 0.6);
+    border: none;
+    color: #a0aec0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: #3182ce;
+    color: #fff;
+}
+
+.status-widget {
+    font-size: 13px;
+    color: #cbd5e0;
+}
+
+/* Содержимое вкладок */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+/* Стили секции расписания */
+.schedule-container, #schedule-section {
+    background: rgba(30, 35, 45, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.schedule-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.schedule-header .badge {
+    background: rgba(70, 130, 180, 0.4);
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+}
+
+.schedule-table th {
+    background: rgba(45, 55, 72, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.schedule-table td.time-cell {
+    font-size: 12px;
+    color: #cbd5e0;
+    white-space: nowrap;
+    background: rgba(26, 32, 44, 0.4);
+}
+
+.schedule-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    outline: none;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.schedule-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.schedule-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.btn-dark {
+    background: #2d3748;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-blue {
+    background: #3182ce;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-red {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* МОБИЛЬНАЯ АДАПТАЦИЯ (для телефонов) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    // Логика календаря
-    let currentDate = new Date();
-    const monthYear = document.getElementById('month-year');
-    const daysGrid = document.getElementById('days-grid');
-    
-    const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        monthYear.textContent = `${months[month]} ${year}`;
-        daysGrid.innerHTML = '';
-
-        const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
-        const totalDays = new Date(year, month + 1, 0).getDate();
-        const prevTotalDays = new Date(year, month, 0).getDate();
-
-        // Прошлый месяц
-        for (let i = firstDayIndex; i > 0; i--) {
-            const cell = document.createElement('div');
-            cell.classList.add('day-cell', 'inactive');
-            cell.textContent = prevTotalDays - i + 1;
-            daysGrid.appendChild(cell);
-        }
-
-        // Текущий месяц
-        const today = new Date();
-        for (let i = 1; i <= totalDays; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('day-cell');
-            cell.textContent = i;
-
-            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                cell.classList.add('today');
-            }
-
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            cell.addEventListener('click', () => openModal(dateStr));
-
-            daysGrid.appendChild(cell);
-        }
-
-        // Следующий месяц
-        const totalCells = firstDayIndex + totalDays;
-        const nextDays = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
-        for (let i = 1; i <= nextDays; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('day-cell', 'inactive');
-            cell.textContent = i;
-            daysGrid.appendChild(cell);
-        }
+    .app-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
     }
 
-    document.getElementById('prev-month').addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    });
-
-    document.getElementById('next-month').addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    });
-
-    renderCalendar();
-
-    // Модальное окно заметок и будильника
-    const modal = document.getElementById('note-modal');
-    const modalTitle = document.getElementById('modal-date-title');
-    const noteText = document.getElementById('note-text');
-    const alarmDate = document.getElementById('alarm-date');
-    const alarmTime = document.getElementById('alarm-time');
-    const saveNoteBtn = document.getElementById('save-note-btn');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    let activeDateStr = '';
-
-    function openModal(dateStr) {
-        activeDateStr = dateStr;
-        modalTitle.textContent = `Заметки на ${dateStr}`;
-        noteText.value = localStorage.getItem('note_' + dateStr) || '';
-        alarmDate.value = dateStr;
-        alarmTime.value = localStorage.getItem('alarm_time_' + dateStr) || '08:00';
-        modal.classList.remove('hidden');
+    .nav-tabs {
+        justify-content: center;
     }
 
-    closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    .schedule-table th, .schedule-table td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
 
-    saveNoteBtn.addEventListener('click', async () => {
-        localStorage.setItem('note_' + activeDateStr, noteText.value);
-        localStorage.setItem('alarm_time_' + activeDateStr, alarmTime.value);
+    .schedule-actions {
+        flex-direction: column;
+    }
 
-        if (alarmDate.value && alarmTime.value) {
-            try {
-                const response = await fetch('/api/set-alarm', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        date: alarmDate.value,
-                        time: alarmTime.value,
-                        note: noteText.value || 'Напоминание из календаря'
-                    })
-                });
-
-                if (response.ok) {
-                    alert('Заметка сохранена и будильник отправлен в Telegram!');
-                } else {
-                    alert('Заметка сохранена локально, но сервер Telegram-бота не ответил (проверьте настройки API).');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Заметка сохранена локально (ошибка соединения с сервером).');
-            }
-        } else {
-            alert('Заметка успешно сохранена!');
-        }
-
-        modal.classList.add('hidden');
-    });
-});
+    .schedule-actions button {
+        width: 100%;
+    }
+}
