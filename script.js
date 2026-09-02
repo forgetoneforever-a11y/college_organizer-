@@ -1,31 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Элементы интерфейса
-    const settingsBtn = document.getElementById('settings-btn'); // Кнопка настроек (если есть в HTML)
+    const settingsBtn = document.getElementById('open-settings-btn');
     const settingsModal = document.getElementById('settings-modal');
-    const closeSettingsBtn = document.getElementById('close-settings');
-    const saveSettingsBtn = document.getElementById('save-settings');
+    const closeSettingsBtn = document.getElementById('close-settings-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
     
-    const discordIdInput = document.getElementById('discord-id-input');
-    const bgUrlInput = document.getElementById('bg-url-input');
-    const blurRangeInput = document.getElementById('blur-range-input');
-    const blurValueSpan = document.getElementById('blur-value'); // Если есть текст со значением размытия
+    const discordIdInput = document.getElementById('setting-discord-id');
+    const bgUrlInput = document.getElementById('setting-bg-url');
+    const blurRangeInput = document.getElementById('setting-blur-range');
+    const blurValueSpan = document.getElementById('blur-value');
 
     const bgVideo = document.getElementById('bg-video');
     const bgImage = document.getElementById('bg-image');
     const spotifyWidget = document.getElementById('spotify-widget');
-    const glassPanels = document.querySelectorAll('.glass-panel, .panel, .modal'); // Селекторы твоих стеклянных панелей
+    const glassElements = document.querySelectorAll('.glass, .app-header, .sidebar, .calendar-main, .modal-content');
+
+    // Гарантированно скрываем модалку настроек при старте
+    if (settingsModal) {
+        settingsModal.classList.add('hidden');
+    }
 
     // Загрузка сохраненных настроек из localStorage
-    const savedDiscordId = localStorage.getItem('discordId') || '1447208839576551457';
+    const savedDiscordId = localStorage.getItem('discordId') || '';
     const savedBgUrl = localStorage.getItem('bgUrl') || '';
-    const savedBlur = localStorage.getItem('blurValue') || '8';
+    const savedBlur = localStorage.getItem('blurValue') || '12';
 
-    // Инициализация полей ввода в модалке текущими значениями
+    // Инициализация полей ввода текущими значениями
     if (discordIdInput) discordIdInput.value = savedDiscordId;
     if (bgUrlInput) bgUrlInput.value = savedBgUrl;
     if (blurRangeInput) {
         blurRangeInput.value = savedBlur;
-        if (blurValueSpan) blurValueSpan.textContent = savedBlur + 'px';
+        if (blurValueSpan) blurValueSpan.textContent = savedBlur;
     }
 
     // Применение настроек при старте
@@ -33,19 +38,35 @@ document.addEventListener('DOMContentLoaded', () => {
     applyBlur(savedBlur);
     setupSpotify(savedDiscordId);
 
-    // Управление модальным окном настроек
+    // Управление модальным окном настроек (открытие)
     if (settingsBtn && settingsModal) {
-        settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsModal.classList.remove('hidden');
+        });
     }
+
+    // Закрытие модального окна настроек
     if (closeSettingsBtn && settingsModal) {
-        closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+    }
+
+    // Закрытие по клику вне модального окна
+    if (settingsModal) {
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        });
     }
 
     // Ползунок размытия в реальном времени
     if (blurRangeInput) {
         blurRangeInput.addEventListener('input', (e) => {
             const val = e.target.value;
-            if (blurValueSpan) blurValueSpan.textContent = val + 'px';
+            if (blurValueSpan) blurValueSpan.textContent = val;
             applyBlur(val);
         });
     }
@@ -55,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveSettingsBtn.addEventListener('click', () => {
             const newDiscordId = discordIdInput ? discordIdInput.value.trim() : '';
             const newBgUrl = bgUrlInput ? bgUrlInput.value.trim() : '';
-            const newBlur = blurRangeInput ? blurRangeInput.value : '8';
+            const newBlur = blurRangeInput ? blurRangeInput.value : '12';
 
             localStorage.setItem('discordId', newDiscordId);
             localStorage.setItem('bgUrl', newBgUrl);
@@ -69,49 +90,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Функция применения фона (с поддержкой локальных файлов и ссылок)
+    // Функция применения фона
     function applyBackground(url) {
+        if (!bgVideo || !bgImage) return;
         if (!url) {
-            if (bgVideo) {
-                bgVideo.pause();
-                bgVideo.src = '';
-                bgVideo.classList.add('hidden');
-            }
-            if (bgImage) bgImage.classList.add('hidden');
+            bgVideo.pause();
+            bgVideo.src = '';
+            bgVideo.classList.add('hidden');
+            bgImage.classList.add('hidden');
             return;
         }
 
-        // Если это видео (локальное имя файла заканчивается на mp4/webm или содержит путь/формат видео)
         if (url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('video') || !url.startsWith('http')) {
-            if (bgVideo) {
-                bgVideo.src = url;
-                bgVideo.classList.remove('hidden');
-                if (bgImage) bgImage.classList.add('hidden');
-                bgVideo.play().catch(e => console.log("Автоплей видео заблокирован браузером:", e));
-            }
+            bgVideo.src = url;
+            bgVideo.classList.remove('hidden');
+            bgImage.classList.add('hidden');
+            bgVideo.play().catch(e => console.log("Автоплей видео заблокирован браузером:", e));
         } else {
-            // Иначе считаем это картинкой по ссылке
-            if (bgImage) {
-                bgImage.style.backgroundImage = `url('${url}')`;
-                bgImage.classList.remove('hidden');
-            }
-            if (bgVideo) {
-                bgVideo.pause();
-                bgVideo.classList.add('hidden');
-            }
+            bgImage.style.backgroundImage = `url('${url}')`;
+            bgImage.classList.remove('hidden');
+            bgVideo.pause();
+            bgVideo.classList.add('hidden');
         }
     }
 
-    // Функция применения эффекта Glassmorphism (размытия панелей)
+    // Функция применения размытия
     function applyBlur(val) {
         document.documentElement.style.setProperty('--glass-blur', `${val}px`);
-        glassPanels.forEach(panel => {
-            panel.style.backdropFilter = `blur(${val}px)`;
-            panel.style.webkitBackdropFilter = `blur(${val}px)`;
+        glassElements.forEach(el => {
+            el.style.backdropFilter = `blur(${val}px)`;
+            el.style.webkitBackdropFilter = `blur(${val}px)`;
         });
     }
 
-    // Подключение к Lanyard WebSocket для виджета Spotify
+    // Подключение к Lanyard WebSocket для Spotify
     let lanyardWs = null;
     function setupSpotify(discordId) {
         if (!discordId) {
@@ -120,21 +132,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (lanyardWs) {
-            lanyardWs.close();
+            try { lanyardWs.close(); } catch (e) {}
         }
 
         try {
             lanyardWs = new WebSocket('wss://api.lanyard.rest/socket');
 
             lanyardWs.onopen = () => {
-                lanyardWs.send(JSON.stringify({
-                    op: 2,
-                    d: { subscribe_to_id: discordId }
-                }));
+                if (lanyardWs.readyState === WebSocket.OPEN) {
+                    lanyardWs.send(JSON.stringify({
+                        op: 2,
+                        d: { subscribe_to_id: discordId }
+                    }));
+                }
             };
 
             lanyardWs.onerror = () => {
-                console.log("Lanyard WebSocket connection error (обычно из-за ограничений сети/региона)");
                 if (spotifyWidget) spotifyWidget.classList.add('hidden');
             };
 
@@ -160,11 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } catch (e) {
-                    console.error('Ошибка обработки данных Lanyard:', e);
+                    // Игнорируем ошибки парсинга
                 }
             };
         } catch (e) {
-            console.log("Не удалось запустить WebSocket Lanyard");
             if (spotifyWidget) spotifyWidget.classList.add('hidden');
         }
     }
