@@ -100,17 +100,17 @@ body {
 .tab-content {
     display: none;
     gap: 16px;
-    width: 100%;
+    align-items: flex-start;
 }
 
 .tab-content.active {
     display: flex;
 }
 
-/* Сайдбар с часами (фиксированная ширина слева) */
+/* Сайдбар с часами */
 .sidebar {
-    width: 300px;
-    min-width: 300px;
+    width: 280px;
+    min-width: 280px;
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -135,11 +135,10 @@ body {
     margin-top: 6px;
 }
 
-/* Главный блок календаря (растягивается на всю остальную ширину) */
+/* Главный блок календаря */
 .calendar-main {
-    flex: 1;
+    flex-grow: 1;
     padding: 24px;
-    overflow: hidden;
 }
 
 .calendar-header {
@@ -188,7 +187,7 @@ body {
 
 .calendar-day {
     position: relative;
-    aspect-ratio: 1.3;
+    aspect-ratio: 1;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
