@@ -8,21 +8,18 @@
 </head>
 <body>
     <div class="app-wrapper">
-        <!-- Шапка с навигацией по вкладкам -->
+        <!-- Шапка с навигацией (без часов) -->
         <header class="app-header">
             <div class="nav-tabs">
                 <button class="tab-btn active" data-tab="calendar-section">Календарь</button>
                 <button class="tab-btn" data-tab="schedule-section">Расписание</button>
-            </div>
-            <div class="status-widget">
-                <span id="current-date-time">02.09.2026 • 00:00:00</span>
             </div>
         </header>
 
         <!-- ВКЛАДКА 1: Календарь и Заметки -->
         <section id="calendar-section" class="tab-content active">
             <div class="app-container" style="display: flex; gap: 20px; width: 100%;">
-                <aside class="sidebar glass" style="flex: 0 0 200px;">
+                <aside class="sidebar glass" style="flex: 0 0 260px;">
                     <div class="live-clock-container">
                         <div id="live-time" class="live-time">00:00:00</div>
                         <div id="live-date" class="live-date">Загрузка даты...</div>
@@ -30,22 +27,22 @@
                 </aside>
 
                 <main class="calendar-main glass" style="flex: 1;">
-                    <header class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <header class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <button id="prev-month">◀</button>
-                        <h1 id="month-year" style="font-size: 1.2rem;">Месяц Год</h1>
+                        <h1 id="month-year" style="font-size: 1.3rem;">Месяц Год</h1>
                         <button id="next-month">▶</button>
                     </header>
                     
-                    <div class="weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; margin-bottom: 10px;">
+                    <div class="weekdays">
                         <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
                     </div>
                     
-                    <div class="days-grid" id="days-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;"></div>
+                    <div class="days-grid" id="days-grid"></div>
                 </main>
             </div>
         </section>
 
-        <!-- ВКЛАДКА 2: Расписание -->
+        <!-- ВКЛАДКА 2: Расписание (увеличенное, Пн и Вт пустые) -->
         <section id="schedule-section" class="tab-content">
             <div class="schedule-header">
                 <h2>Расписание техникума <span class="badge">v1.00</span></h2>
@@ -71,85 +68,85 @@
                         <tr>
                             <td>1</td>
                             <td class="time-cell">08:30 - 10:00</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="История"></td>
                             <td><input type="text" class="schedule-input" value="Оси.роб.БПЛА"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="Ин. яз"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 2 -->
                         <tr>
                             <td>2</td>
                             <td class="time-cell">10:10 - 11:40</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="Ин. яз"></td>
                             <td><input type="text" class="schedule-input" value="Инж. граф"></td>
                             <td><input type="text" class="schedule-input" value="История"></td>
                             <td><input type="text" class="schedule-input" value="Проц. форм"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 3 -->
                         <tr>
                             <td>3</td>
                             <td class="time-cell">12:10 - 13:40</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="Проц. форм"></td>
                             <td><input type="text" class="schedule-input" value="Материаловед"></td>
                             <td><input type="text" class="schedule-input" value="Тех. мех"></td>
                             <td><input type="text" class="schedule-input" value="Физ - ра"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 4 -->
                         <tr>
                             <td>4</td>
                             <td class="time-cell">13:50 - 15:20</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="Проц. форм"></td>
                             <td><input type="text" class="schedule-input" value="Кл. час"></td>
                             <td><input type="text" class="schedule-input" value="Проц. форм"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 5 -->
                         <tr>
                             <td>5</td>
                             <td class="time-cell">15:30 - 17:00</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                             <td><input type="text" class="schedule-input" value="Проц. форм"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 6 -->
                         <tr>
                             <td>6</td>
                             <td class="time-cell">17:10 - 18:40</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                         <!-- Строка 7 -->
                         <tr>
                             <td>7</td>
                             <td class="time-cell">18:50 - 20:20</td>
-                            <td><input type="text" class="schedule-input" placeholder="-"></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
-                            <td><input type="text" class="schedule-input" placeholder=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
+                            <td><input type="text" class="schedule-input" value=""></td>
                         </tr>
                     </tbody>
                 </table>
@@ -173,8 +170,8 @@
             <div class="alarm-section" style="margin-top: 15px;">
                 <label style="font-size: 14px; display: block; margin-bottom: 5px;">⏰ Будильник в Telegram:</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="date" id="alarm-date" style="padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; flex: 1;">
-                    <input type="time" id="alarm-time" style="padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; width: 110px;">
+                    <input type="date" id="alarm-date" style="padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; flex: 1;">
+                    <input type="time" id="alarm-time" style="padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #fff; width: 120px;">
                 </div>
             </div>
 
