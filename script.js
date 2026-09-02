@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         daysGrid.innerHTML = '';
 
         const firstDayIndex = new Date(year, month, 1).getDay();
-        const adjustedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1; // Понедельник первый
+        const adjustedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
         const totalDays = new Date(year, month + 1, 0).getDate();
         const prevTotalDays = new Date(year, month, 0).getDate();
 
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             daysGrid.appendChild(dayDiv);
         }
 
-        // Дни следующего месяца для заполнения сетки
+        // Дни следующего месяца
         const totalCells = adjustedFirstDay + totalDays;
         const nextDaysCount = (totalCells <= 35) ? (35 - totalCells) : (42 - totalCells);
         for (let i = 1; i <= nextDaysCount; i++) {
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCalendar();
 
-    // Управление модальным окном заметок
+    // Заметки
     if (saveNoteBtn) {
         saveNoteBtn.addEventListener('click', () => {
             const notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
@@ -166,11 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModalBtn.addEventListener('click', () => noteModal.classList.add('hidden'));
     }
 
-    // Гарантированно скрываем модалки при старте
     if (settingsModal) settingsModal.classList.add('hidden');
     if (noteModal) noteModal.classList.add('hidden');
 
-    // Загрузка сохраненных настроек из localStorage
+    // Загрузка настроек
     const savedDiscordId = localStorage.getItem('discordId') || '';
     const savedBgUrl = localStorage.getItem('bgUrl') || '';
     const savedBlur = localStorage.getItem('blurValue') || '12';
@@ -186,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyBlur(savedBlur);
     setupSpotify(savedDiscordId);
 
-    // Управление модальным окном настроек
+    // Модальное окно настроек
     if (settingsBtn && settingsModal) {
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -236,9 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyBackground(url) {
         if (!bgVideo || !bgImage) return;
-        if (!url) {
+        if (!url || url.trim() === '') {
             bgVideo.pause();
-            bgVideo.src = '';
+            bgVideo.removeAttribute('src');
+            bgVideo.load();
             bgVideo.classList.add('hidden');
             bgImage.classList.add('hidden');
             return;
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bgVideo.src = url;
             bgVideo.classList.remove('hidden');
             bgImage.classList.add('hidden');
-            bgVideo.play().catch(e => console.log("Автоплей видео заблокирован браузером:", e));
+            bgVideo.play().catch(e => console.log("Автоплей видео заблокирован:", e));
         } else {
             bgImage.style.backgroundImage = `url('${url}')`;
             bgImage.classList.remove('hidden');
@@ -265,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Подключение к Lanyard WebSocket для Spotify
     let lanyardWs = null;
     function setupSpotify(discordId) {
         if (!discordId) {
